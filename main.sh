@@ -10,6 +10,18 @@ papan(){
 
 check(){
 
+    case $input in
+        ''|*[!0-9]*) 
+            echo "               ----Input yang anda masukkan tidak valid----"
+            return ;;
+    esac
+
+    if [ $input -gt 9 ]
+    then
+        echo "               ----Nomor yang anda masukkan tidak valid----"
+        return
+    fi
+
     if [ ${number[$input - 1]} = "O" -o ${number[$input - 1]} = "X" ]
     then
         echo "Nomor yang anda masukkan sudah digunakan"
@@ -21,9 +33,18 @@ check(){
     winnerCheck
     if [ $? -eq 1 ];
     then
+        papan
         echo "Pemenangnya adalah $winner"
         return 1
     fi
+
+    if [ $tmp -eq 9 ]
+    then
+        echo "Permainan Seri"
+        return 2
+    fi
+
+    tmp=`expr $tmp + 1`
     
     turn=`expr $turn + 1`
     
@@ -47,11 +68,15 @@ winnerCheck(){
     then
         winner=${user[temp]}
         return 1
-    elif [ ${number[0]} = ${number[3]} -a ${number[0]} = ${number[5]} ];
+    elif [ ${number[0]} = ${number[3]} -a ${number[0]} = ${number[6]} ];
     then
         winner=${user[temp]}
         return 1
     elif [ ${number[2]} = ${number[5]} -a ${number[2]} = ${number[8]} ];
+    then
+        winner=${user[temp]}
+        return 1
+    elif [ ${number[1]} = ${number[4]} -a ${number[1]} = ${number[7]} ];
     then
         winner=${user[temp]}
         return 1
@@ -60,6 +85,14 @@ winnerCheck(){
         winner=${user[temp]}
         return 1
     elif [ ${number[6]} = ${number[7]} -a ${number[6]} = ${number[8]} ];
+    then
+        winner=${user[temp]}
+        return 1
+    elif [ ${number[0]} = ${number[4]} -a ${number[0]} = ${number[8]} ];
+    then
+        winner=${user[temp]}
+        return 1
+    elif [ ${number[2]} = ${number[4]} -a ${number[2]} = ${number[6]} ];
     then
         winner=${user[temp]}
         return 1
@@ -72,6 +105,8 @@ runGame(){
     registerUser
     papan
     
+    tmp=1
+
     while [ true ]
     do
         changeTurn
@@ -83,7 +118,14 @@ runGame(){
         clear
         
         check
-        if [ $? -eq 1 ];
+        rt=$?
+        if [ $rt -eq 1 ];
+        then
+            saveMenu
+            break
+        fi
+
+        if [ $rt -eq 2 ];
         then
             break
         fi
@@ -93,8 +135,7 @@ runGame(){
 	echo -n "Klik enter to next"
         read temp
     done
-    
-    saveMenu
+
     clear
     menu
 }
@@ -158,7 +199,7 @@ menu(){
         echo "Selamat Tinggal . . ."
     else
         clear
-        echo "Masukkan tidak valid"
+        echo "              ----Masukkan tidak valid----"
         menu
     fi
 }
