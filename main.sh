@@ -40,7 +40,9 @@ check(){
 
     if [ $tmp -eq 9 ]
     then
-        echo "Permainan Seri"
+        echo "           ----Permainan Seri----"
+        echo -n "Enter to next "
+        read tst
         return 2
     fi
 
